@@ -39,3 +39,8 @@ After DNS is live:
    - `VITE_WS_URL=https://api.sync.rollsev.work`
 3. Redeploy `api` and `web`.
 4. Re-run smoke with 2-3 tabs and 2 accounts.
+
+Current status check (2026-03-14):
+- `sync.rollsev.work` DNS: not resolvable yet.
+- `api.sync.rollsev.work` DNS: not resolvable yet.
+- SSL and WSS validation can only be completed after records propagate.

@@ -85,8 +85,8 @@
 - [x] smoke test in prod
 
 ## 11. Domain sync.rollsev.work (last)
-- [ ] custom domain bind (post-deploy)
-- [ ] SSL + CORS + WSS checks
+- [x] custom domain bind (post-deploy, attached in Railway)
+- [ ] SSL + CORS + WSS checks (blocked until DNS records are created/propagated)
 
 ## 12. Portfolio amplification
 - [x] README architecture + event lifecycle
