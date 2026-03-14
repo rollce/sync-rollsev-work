@@ -63,6 +63,8 @@ WS: `ws://localhost:3001/ws`
 Demo account:
 - email: `demo@rollsev.work`
 - password: `demo12345`
+- email: `collab@rollsev.work`
+- password: `demo12345`
 
 ## Protocol (WebSocket)
 Transport events:
