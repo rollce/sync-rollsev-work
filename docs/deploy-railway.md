@@ -21,16 +21,21 @@
 - WebSocket join room OK (`ROOM_USERS` received)
 
 ## Custom domain (deferred by request)
-Manual next step for final domain binding:
-1. Add custom domain in Railway:
-   - web: `sync.rollsev.work`
-   - optional api split: `api.sync.rollsev.work`
-2. Railway returns DNS target records.
-3. Add DNS records in your DNS provider.
-4. Wait for SSL provisioning.
-5. Update env:
+Custom domains are already attached in Railway and waiting for DNS propagation.
+
+Add these DNS records:
+1. `sync.rollsev.work` -> CNAME `9n8lomgv.up.railway.app`
+2. `api.sync.rollsev.work` -> CNAME `nzetrq16.up.railway.app`
+
+Add these ownership TXT records:
+1. `_railway-verify.sync.rollsev.work` -> `railway-verify=3b7ef5dc0bbd6f002ece95a5faf3306709d218107011a8900d8b5c3a1414ee73`
+2. `_railway-verify.api.sync.rollsev.work` -> `railway-verify=488ce212b24873e19775ea625256282a262c78f019100021c057187cfd6c392e`
+
+After DNS is live:
+1. Set API vars:
    - `CORS_ORIGINS=https://sync.rollsev.work`
-   - `VITE_API_URL=https://api.sync.rollsev.work` (or shared host if single domain)
+2. Set Web vars:
+   - `VITE_API_URL=https://api.sync.rollsev.work`
    - `VITE_WS_URL=https://api.sync.rollsev.work`
-6. Re-deploy `api` and `web`.
-7. Verify with 2-3 tabs and 2 accounts.
+3. Redeploy `api` and `web`.
+4. Re-run smoke with 2-3 tabs and 2 accounts.
