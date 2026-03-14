@@ -76,7 +76,7 @@
 - [x] room auth tests
 - [x] presence tests
 - [x] reconnect/conflict tests
-- [ ] smoke e2e with 2 users
+- [x] smoke e2e with 2 users
 
 ## 10. Deploy architecture (Railway)
 - [x] Services: web/api/postgres/redis
