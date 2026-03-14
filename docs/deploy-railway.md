@@ -44,3 +44,7 @@ Current status check (2026-03-14):
 - `sync.rollsev.work` DNS: not resolvable yet.
 - `api.sync.rollsev.work` DNS: not resolvable yet.
 - SSL and WSS validation can only be completed after records propagate.
+
+Readiness checks completed on production (2026-03-14):
+- CORS preflight with `Origin: https://sync.rollsev.work` returned `204` and `access-control-allow-origin: https://sync.rollsev.work`.
+- Socket.IO websocket connection succeeded against `https://api-production-f1da.up.railway.app/ws` with `Origin: https://sync.rollsev.work`.

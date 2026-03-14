@@ -86,7 +86,9 @@
 
 ## 11. Domain sync.rollsev.work (last)
 - [x] custom domain bind (post-deploy, attached in Railway)
-- [ ] SSL + CORS + WSS checks (blocked until DNS records are created/propagated)
+- [x] CORS allowlist includes `https://sync.rollsev.work`
+- [x] WSS readiness check passed (with Origin `https://sync.rollsev.work` on prod API host)
+- [ ] SSL checks on `sync.rollsev.work` and `api.sync.rollsev.work` (blocked until DNS records are created/propagated)
 
 ## 12. Portfolio amplification
 - [x] README architecture + event lifecycle
