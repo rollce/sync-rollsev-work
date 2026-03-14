@@ -1,0 +1,20 @@
+{
+  "name": "sync-rollsev-work",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @sync/shared & npm run dev --workspace @sync/web & npm run dev --workspace @sync/api",
+    "start": "node scripts/railway-start.mjs",
+    "build": "npm run build --workspace @sync/shared && npm run build --workspace @sync/api && npm run build --workspace @sync/web",
+    "lint": "npm run lint --workspace @sync/shared && npm run lint --workspace @sync/api && npm run lint --workspace @sync/web",
+    "test": "npm run test --workspace @sync/shared && npm run test --workspace @sync/api && npm run test --workspace @sync/web",
+    "format": "npm run format --workspace @sync/shared && npm run format --workspace @sync/api && npm run format --workspace @sync/web"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

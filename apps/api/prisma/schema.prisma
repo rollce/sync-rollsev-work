@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum WorkspaceRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+model User {
+  id            String            @id @default(cuid())
+  email         String            @unique
+  passwordHash  String
+  name          String
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  memberships   WorkspaceMember[]
+  comments      Comment[]
+  presence      PresenceSession[]
+  events        ActivityEvent[]
+  notifications Notification[]
+}
+
+model Workspace {
+  id         String            @id @default(cuid())
+  slug       String            @unique
+  name       String
+  ownerId    String
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  members    WorkspaceMember[]
+  boards     Board[]
+  events     ActivityEvent[]
+  notifications Notification[]
+
+  @@index([ownerId])
+}
+
+model WorkspaceMember {
+  id          String        @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        WorkspaceRole
+  joinedAt    DateTime      @default(now())
+
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+model Board {
+  id            String          @id @default(cuid())
+  workspaceId   String
+  title         String
+  description   String?
+  createdById   String
+  seq           Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  workspace     Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  lists         BoardList[]
+  cards         BoardCard[]
+  comments      Comment[]
+  events        ActivityEvent[]
+  snapshots     BoardSnapshot[]
+  presence      PresenceSession[]
+  notifications Notification[]
+
+  @@index([workspaceId])
+}
+
+model BoardList {
+  id          String      @id @default(cuid())
+  boardId     String
+  title       String
+  order       Int
+  createdAt   DateTime    @default(now())
+
+  board       Board       @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  cards       BoardCard[]
+
+  @@index([boardId, order])
+}
+
+model BoardCard {
+  id            String      @id @default(cuid())
+  boardId       String
+  listId        String
+  title         String
+  description   String?
+  order         Int
+  lastEditedBy  String
+  lastEditedAt  DateTime    @default(now())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  board         Board       @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  list          BoardList   @relation(fields: [listId], references: [id], onDelete: Cascade)
+  comments      Comment[]
+
+  @@index([boardId, listId, order])
+}
+
+model Comment {
+  id          String      @id @default(cuid())
+  boardId     String
+  cardId      String
+  userId      String
+  content     String
+  mentions    Json?
+  createdAt   DateTime    @default(now())
+
+  board       Board       @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  card        BoardCard   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications Notification[]
+
+  @@index([boardId, createdAt])
+  @@index([cardId, createdAt])
+}
+
+model PresenceSession {
+  id           String     @id @default(cuid())
+  boardId      String
+  userId       String
+  socketId     String
+  cursorX      Float?
+  cursorY      Float?
+  viewport     String?
+  typingCardId String?
+  typingActive Boolean    @default(false)
+  lastSeenAt   DateTime   @default(now())
+
+  board        Board      @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([boardId, lastSeenAt])
+  @@unique([boardId, userId, socketId])
+}
+
+model ActivityEvent {
+  id           String     @id @default(cuid())
+  workspaceId  String
+  boardId      String
+  actorId      String
+  eventType    String
+  seq          Int
+  payload      Json?
+  createdAt    DateTime   @default(now())
+
+  workspace    Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  board        Board      @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  actor        User       @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([boardId, seq])
+  @@index([workspaceId, createdAt])
+}
+
+model BoardSnapshot {
+  id          String     @id @default(cuid())
+  boardId     String
+  seq         Int
+  state       Json
+  createdAt   DateTime   @default(now())
+
+  board       Board      @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@index([boardId, seq])
+}
+
+model Notification {
+  id           String     @id @default(cuid())
+  userId       String
+  workspaceId  String
+  boardId      String
+  commentId    String?
+  type         String
+  metadata     Json?
+  isRead       Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace    Workspace  @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  board        Board      @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  comment      Comment?   @relation(fields: [commentId], references: [id], onDelete: SetNull)
+
+  @@index([userId, isRead, createdAt])
+}
